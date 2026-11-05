@@ -1,0 +1,50 @@
+const BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+// 1. Универсальная функция для GET-запроса на коллбэках
+function fetchDataCallback(endpoint, callback) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `${BASE_URL}${endpoint}`, true);
+  
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      callback(null, JSON.parse(xhr.responseText));
+    } else {
+      callback(new Error(`Ошибка: ${xhr.status}`));
+    }
+  };
+  
+  xhr.onerror = function () {
+    callback(new Error('Ошибка сети'));
+  };
+  
+  xhr.send();
+}
+
+// 2. Логика для /posts (сортировка по убыванию длины title)
+function getPostsSorted(callback) {
+  fetchDataCallback('/posts', (err, posts) => {
+    if (err) return callback(err);
+    const sorted = posts.sort((a, b) => b.title.length - a.title.length);
+    callback(null, sorted);
+  });
+}
+
+// 3. Логика для /comments (сортировка по имени автора)
+function getCommentsSorted(callback) {
+  fetchDataCallback('/comments', (err, comments) => {
+    if (err) return callback(err);
+    const sorted = comments.sort((a, b) => a.name.localeCompare(b.name));
+    callback(null, sorted);
+  });
+}
+
+// --- Вызов функций (для проверки) ---
+/*
+getPostsSorted((err, data) => {
+  if (!err) console.log('Посты (Callbacks):', data.slice(0, 3)); // Выведем первые 3
+});
+
+getCommentsSorted((err, data) => {
+  if (!err) console.log('Комменты (Callbacks):', data.slice(0, 3));
+});
+*/
