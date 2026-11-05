@@ -1,0 +1,40 @@
+const BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+function getFilteredUsers() {
+  return fetch(`${BASE_URL}/users`)
+    .then(response => {
+      if (!response.ok) throw new Error('Ошибка сети');
+      return response.json();
+    })
+    .then(users => {
+      return users.map(user => ({
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        phone: user.phone
+      }));
+    });
+}
+
+function getUncompletedTodos() {
+  return fetch(`${BASE_URL}/todos`)
+    .then(response => {
+      if (!response.ok) throw new Error('Ошибка сети');
+      return response.json();
+    })
+    .then(todos => {
+      return todos.filter(todo => !todo.completed); // falsy status
+    });
+}
+
+// --- Вызов функций (для проверки) ---
+/*
+getFilteredUsers()
+  .then(data => console.log('Юзеры (Promises):', data))
+  .catch(err => console.error(err));
+
+getUncompletedTodos()
+  .then(data => console.log('Незавершенные Todos (Promises):', data.length))
+  .catch(err => console.error(err));
+*/
