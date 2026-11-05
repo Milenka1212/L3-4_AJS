@@ -1,0 +1,61 @@
+const BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+
+async function fetchData(endpoint) {
+  const response = await fetch(`${BASE_URL}${endpoint}`);
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+
+
+async function getPostsSortedAsync() {
+  const posts = await fetchData('/posts');
+  return posts.sort((a, b) => b.title.length - a.title.length);
+}
+
+
+async function getCommentsSortedAsync() {
+  const comments = await fetchData('/comments');
+  return comments.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+
+async function getFilteredUsersAsync() {
+  const users = await fetchData('/users');
+  return users.map(user => ({
+    id: user.id,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    phone: user.phone
+  }));
+}
+
+
+async function getUncompletedTodosAsync() {
+  const todos = await fetchData('/todos');
+  return todos.filter(todo => !todo.completed);
+}
+
+// --- Вызов функций (для проверки) ---
+/*
+async function runAll() {
+  try {
+    const posts = await getPostsSortedAsync();
+    console.log('Посты (Async/Await):', posts.slice(0, 2));
+    
+    const comments = await getCommentsSortedAsync();
+    console.log('Комменты (Async/Await):', comments.slice(0, 2));
+    
+    const users = await getFilteredUsersAsync();
+    console.log('Юзеры (Async/Await):', users.slice(0, 2));
+    
+    const todos = await getUncompletedTodosAsync();
+    console.log('Todos (Async/Await):', todos.slice(0, 2));
+  } catch (error) {
+    console.error('Ошибка:', error);
+  }
+}
+
+runAll();
+*/
